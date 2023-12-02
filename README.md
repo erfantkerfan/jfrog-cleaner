@@ -16,7 +16,7 @@ You can find out different flags yourself.
 
 - Adding Dockefile
 
-- Adding the ability to readd password from ENV fot better security
+- Adding the ability to read password from ENV for better security
 
 #### Notes:
 
