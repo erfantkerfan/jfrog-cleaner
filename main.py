@@ -2,16 +2,9 @@ import argparse
 import re
 import requests
 import types
-from colorama import init as OriginalColorama_init
-from colorama import Fore as OriginalFore
-from colorama import Style as OriginalStyle
-
-
-class DummyColorama:
-    BLACK=RED=GREEN=YELLOW=BLUE=MAGENTA=CYAN=WHITE=RESET_ALL=Style=colorama_init=''
-
-    def colorama_init():
-        pass
+from colorama import init as colorama_init
+from colorama import Fore
+from colorama import Style
 
 def debug_print(printable):
     if args.verbose:
@@ -59,17 +52,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Cleaning up artifacts from jfrog artifactory in a granular manner.')
     parser.add_argument('-C', '--config', help="config file to use in this directory, defaults to config.py", default='config', type=str)
     parser.add_argument('-D', '--dry', help="run in dry-run mode", default=False, action="store_true")
-    parser.add_argument('-P', '--plain', help="run in plain mode (print no color, suited for file output)", default=False, action="store_true")
     parser.add_argument('-v', '--verbose', help="run in verbose mode", default=False, action="store_true")
     args = parser.parse_args()
 
-    if args.plain:
-        Fore = Style = DummyColorama
-        colorama_init = DummyColorama.colorama_init
-    else:
-        Fore = OriginalFore
-        Style = OriginalStyle
-        colorama_init = OriginalColorama_init
     colorama_init()
 
     # import config file
