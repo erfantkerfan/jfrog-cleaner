@@ -18,15 +18,15 @@ def match_any_pattern(patterns, text):
     return text
     
 def filter_results(results, path):
-    x = []
+    deletion_candidate = []
     for result in results:
         artifact_url = configfile.BASE_URL + result['repo'] + '/' + result['path'] + '/' + result['name']
         if match_any_pattern(path['keep_filters'], result['name']) is not None:
             print(f'{Fore.RED}{artifact_url} -> will be deleted{Style.RESET_ALL}')
-            x.append(result)
+            deletion_candidate.append(result)
         else:
             debug_print(f'{Fore.GREEN}{artifact_url} -> will be kept{Style.RESET_ALL}')
-    return(x)
+    return(deletion_candidate)
 
 def remove_asset_from_art(subject):
     artifact_url = configfile.BASE_URL + subject['repo'] + '/' + subject['path'] + '/' + subject['name']
@@ -52,6 +52,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Cleaning up artifacts from jfrog artifactory in a granular manner.')
     parser.add_argument('-C', '--config', help="config file to use in this directory, defaults to config.py", default='config', type=str)
     parser.add_argument('-D', '--dry', help="run in dry-run mode", default=False, action="store_true")
+    parser.add_argument('-S', '--safe', help="run in safe-mode (keeps at least one of the safe tagged images)", default=False, action="store_true")
     parser.add_argument('-v', '--verbose', help="run in verbose mode", default=False, action="store_true")
     args = parser.parse_args()
 
