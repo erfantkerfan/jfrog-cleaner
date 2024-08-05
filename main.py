@@ -48,9 +48,11 @@ def filter_results(results, path):
             deletion_candidate.append(result)
         else:
             debug_print(f'{Fore.GREEN}{artifact_url} -> will be kept{Style.RESET_ALL}')
-    deletion_list = save_safe_tags(deletion_candidate)
 
-    return(deletion_list)
+    if args.safe:
+        deletion_candidate = save_safe_tags(deletion_candidate)
+
+    return(deletion_candidate)
 
 def remove_asset_from_art(subject):
     artifact_url = configfile.BASE_URL + subject['repo'] + '/' + subject['path'] + '/' + subject['name']
