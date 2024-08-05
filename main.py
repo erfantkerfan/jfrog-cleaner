@@ -16,7 +16,29 @@ def match_any_pattern(patterns, text):
         if re.search(pattern, text):
             return None
     return text
-    
+
+def save_safe_tags(deletion_candidate):
+    grouped_by_repo_and_path = {}
+    for item in deletion_candidate:
+        key = f"{item['repo']}-{item['path']}"
+        if key not in grouped_by_repo_and_path:
+            grouped_by_repo_and_path[key] = []
+        grouped_by_repo_and_path[key].append(item)
+
+    regex_pattern = re.compile(configfile.SAFE_TAG, re.IGNORECASE)
+    elements_to_remove = []
+    for group_key, items in grouped_by_repo_and_path.items():
+        matching_items = [item for item in items if regex_pattern.search(item['name'])]
+        if matching_items:
+            # Keep only the latest matching item
+            matching_items_to_remove = matching_items[:-1]
+            artifact_url = configfile.BASE_URL + matching_items[-1]['repo'] + '/' + matching_items[-1]['path'] + '/' + matching_items[-1]['name']
+            print(f'{Fore.MAGENTA}{artifact_url} -> will be kept with SAVED tag!{Style.RESET_ALL}')
+            elements_to_remove.extend(matching_items_to_remove)
+
+    # Remove ans return elements from the original list
+    return [item for item in deletion_candidate if item not in elements_to_remove]
+
 def filter_results(results, path):
     deletion_candidate = []
     for result in results:
@@ -26,7 +48,9 @@ def filter_results(results, path):
             deletion_candidate.append(result)
         else:
             debug_print(f'{Fore.GREEN}{artifact_url} -> will be kept{Style.RESET_ALL}')
-    return(deletion_candidate)
+    deletion_list = save_safe_tags(deletion_candidate)
+
+    return(deletion_list)
 
 def remove_asset_from_art(subject):
     artifact_url = configfile.BASE_URL + subject['repo'] + '/' + subject['path'] + '/' + subject['name']

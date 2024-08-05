@@ -6,6 +6,8 @@ HEADERS = {
     'content-type': 'text/plain',
 }
 
+SAFE_TAG = 'stable'
+
 PATHS = [
     {
         #clean images older than 5w except the ones with stable or latest or main tags (regex)
